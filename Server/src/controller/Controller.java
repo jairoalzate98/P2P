@@ -18,13 +18,13 @@ public class Controller {
 	private MainWindow mainWindow;
 
 	public Controller() {
-		int port = Integer.parseInt(JOptionPane.showInputDialog(null, "Ingrese el puerto"));
+		mainWindow = new MainWindow();
+		int port = Integer.parseInt(JOptionPane.showInputDialog(mainWindow, "Ingrese el puerto"));
 		try {
 			server = new Server(port);
 		} catch (NumberFormatException | HeadlessException | IOException e) {
 			e.printStackTrace();
 		}
-		mainWindow = new MainWindow();
 		timer = new Timer(10, new ActionListener() {
 			
 			@Override
@@ -32,6 +32,7 @@ public class Controller {
 				mainWindow.setModel(server.getConnections());
 			}
 		});
+		mainWindow.setVisible(true);
 		timer.start();
 	}
 }

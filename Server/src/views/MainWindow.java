@@ -22,11 +22,9 @@ public class MainWindow extends JFrame {
 		setTitle(TITLE_TEXT);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(new Dimension(WIDTH_FRAME, HEIGHT_FRAME));
-		setLocationRelativeTo(null);
 		modelSockets = new DefaultListModel<>();
 		sockets = new JList<>(modelSockets);
 		add(sockets, BorderLayout.CENTER);
-		setVisible(true);
 	}
 	
 	public void setModel(ArrayList<ThreadSocket> sockets){

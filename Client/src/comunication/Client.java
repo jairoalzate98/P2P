@@ -3,14 +3,11 @@ package comunication;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import persistence.FileManager;
 
 public class Client extends Thread {
 
@@ -21,8 +18,10 @@ public class Client extends Thread {
 	public final static Logger LOGGER = Logger.getGlobal();
 	private String name;
 	private ArrayList<String> archives;
+	private String path;
 
 	public Client(String ip, int port, String name, String path) throws IOException {
+		this.path = path;
 		archives = new ArrayList<>();
 		this.name = name;
 		this.connection = new Socket(ip, port);
@@ -53,12 +52,13 @@ public class Client extends Thread {
 		LOGGER.log(Level.INFO, "Mensaje Recibido" + response);
 	}
 
-	public void getArchives(String path){
+	public void getArchivesUser() throws IOException{
 		File file = new File(path);
 		File[] files = file.listFiles();
 		for (File archive : files) {
 			archives.add(archive.getAbsolutePath());
 		}
+		sendArchives();
 	}
 
 	public String getNameUser() {
@@ -74,13 +74,10 @@ public class Client extends Thread {
 	}
 
 	public void sendArchives() throws IOException {
-		File file = FileManager.FILE;
-		output.writeUTF(String.valueOf(file.length()));
-		FileInputStream fis = new FileInputStream(file);
-		byte[] buffer = new byte[4096];
-		while (fis.read(buffer) > 0) {
-			output.write(buffer);
+		String send = "";
+		for (String string : archives) {
+			send += string + ",";
 		}
-		fis.close();
+		output.writeUTF(send);
 	}
 }

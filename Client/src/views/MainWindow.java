@@ -18,7 +18,6 @@ public class MainWindow extends JFrame{
 		setTitle(TITLE_TEXT);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(new Dimension(WIDTH_FRAME, HEIGHT_FRAME));
-		setLocationRelativeTo(null);
 	}
 	
 	public String setVisibleFileChooser() throws Exception{

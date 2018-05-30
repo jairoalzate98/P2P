@@ -7,7 +7,6 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 
 import comunication.Client;
-import persistence.FileManager;
 import views.MainWindow;
 
 public class Controller implements ActionListener{
@@ -16,15 +15,13 @@ public class Controller implements ActionListener{
 	public static final String ENTER_THE_IP = "Ingrese la ip";
 	private Client client;
 	private MainWindow mainWindow;
-	private FileManager fileManager;
 	
 	public Controller() {
-		String ip = JOptionPane.showInputDialog(null, ENTER_THE_IP);
-		int port = Integer.parseInt(JOptionPane.showInputDialog(null, ENTER_THE_PORT));
-		String name = JOptionPane.showInputDialog(null, "Ingrese su nombre de usuario");
-		String path;
-		fileManager = new FileManager();
 		mainWindow = new MainWindow(this);
+		String ip = JOptionPane.showInputDialog(mainWindow, ENTER_THE_IP);
+		int port = Integer.parseInt(JOptionPane.showInputDialog(mainWindow, ENTER_THE_PORT));
+		String name = JOptionPane.showInputDialog(mainWindow, "Ingrese su nombre de usuario");
+		String path;
 		try {
 			path = mainWindow.setVisibleFileChooser();
 			client = new Client(ip, port, name, path);
@@ -37,8 +34,7 @@ public class Controller implements ActionListener{
 
 	private void sendArchives() {
 		try {
-			fileManager.writeFile(client.getArchives());
-			client.sendArchives();
+			client.getArchivesUser();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
