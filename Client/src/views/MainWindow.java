@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 
 public class MainWindow extends JFrame{
 
+	public static final String EXCEPTION_FILE_CHOOSER_TEXT = "Please select a directory";
 	public static final String TITLE_TEXT = "Archives";
 	private static final long serialVersionUID = 1L;
 	public static final int HEIGHT_FRAME = 500;
@@ -29,7 +30,7 @@ public class MainWindow extends JFrame{
 			File file = jFileChooser.getSelectedFile();
 			path = file.getPath();
 		}else if(result == JFileChooser.CANCEL_OPTION){
-			new Exception("Please select a directory");
+			new Exception(EXCEPTION_FILE_CHOOSER_TEXT);
 		}
 		return path;
 	}

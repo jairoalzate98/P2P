@@ -49,14 +49,20 @@ public class Client extends Thread {
 	}
 
 	private void manageResponse(String response) throws IOException {
-		LOGGER.log(Level.INFO, "Mensaje Recibido" + response);
+		if (response.equals(Request.SEND_CLIENTS.toString())) {
+			output.writeUTF(Request.SEND_CLIENTS.toString());
+			String recive = input.readUTF();
+			System.out.println(recive);
+		}
 	}
 
 	public void getArchivesUser() throws IOException{
 		File file = new File(path);
 		File[] files = file.listFiles();
 		for (File archive : files) {
-			archives.add(archive.getAbsolutePath());
+			if (!(archive.isDirectory())) {
+				archives.add(archive.getAbsolutePath());
+			}
 		}
 		sendArchives();
 	}

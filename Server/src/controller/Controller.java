@@ -26,7 +26,6 @@ public class Controller {
 			e.printStackTrace();
 		}
 		timer = new Timer(10, new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mainWindow.setModel(server.getConnections());
