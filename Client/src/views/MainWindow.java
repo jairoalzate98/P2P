@@ -18,6 +18,7 @@ public class MainWindow extends JFrame{
 	public MainWindow(ActionListener actionListener) {
 		setTitle(TITLE_TEXT);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
 		setSize(new Dimension(WIDTH_FRAME, HEIGHT_FRAME));
 	}
 	

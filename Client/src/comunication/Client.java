@@ -3,11 +3,14 @@ package comunication;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import controllers.Controller;
 
 public class Client extends Thread {
 
@@ -19,9 +22,11 @@ public class Client extends Thread {
 	private String name;
 	private ArrayList<String> archives;
 	private String path;
+	private Controller controller;
 
-	public Client(String ip, int port, String name, String path) throws IOException {
+	public Client(String ip, int port, String name, String path, Controller controller) throws IOException {
 		this.path = path;
+		this.controller = controller;
 		archives = new ArrayList<>();
 		this.name = name;
 		this.connection = new Socket(ip, port);
@@ -50,10 +55,26 @@ public class Client extends Thread {
 
 	private void manageResponse(String response) throws IOException {
 		if (response.equals(Request.SEND_CLIENTS.toString())) {
-			output.writeUTF(Request.SEND_CLIENTS.toString());
-			String recive = input.readUTF();
-			System.out.println(recive);
+			output.writeUTF(Request.PETITION_ACCEPT.toString());
+			int size = Integer.parseInt(input.readUTF());
+			readArchive(size, input);
+			controller.readUsers();
 		}
+	}
+
+	private void readArchive(double size, DataInputStream input) throws IOException {
+		FileOutputStream fos = new FileOutputStream("users.xml");
+		byte[] buffer = new byte[4096];
+		int filesize = (int)size;
+		int read = 0;
+		int totalRead = 0;
+		int remaining = filesize;
+		while((read = input.read(buffer, 0, Math.min(buffer.length, remaining))) > 0) {
+			totalRead += read;
+			remaining -= read;
+			fos.write(buffer, 0, read);
+		}
+		fos.close();
 	}
 
 	public void getArchivesUser() throws IOException{

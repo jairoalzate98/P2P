@@ -47,7 +47,6 @@ public class FileManager {
 	}
 */
 	public void writeReport(ArrayList<ThreadSocket> sockets) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException{
-		System.out.println(sockets.size());
 		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		Element games = document.createElement("Users");
 		for (ThreadSocket socket : sockets) {

@@ -2,6 +2,8 @@ package comunication;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -9,6 +11,8 @@ import java.util.logging.Level;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+
+import persistence.FileManager;
 
 public class ThreadSocket extends Thread{
 
@@ -55,6 +59,11 @@ public class ThreadSocket extends Thread{
 				stop = true;
 				try {
 					server.sendUser();
+					try {
+						server.sendArchivesToUser();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				} catch (ParserConfigurationException | TransformerFactoryConfigurationError
 						| TransformerException e1) {
 					e1.printStackTrace();
@@ -72,6 +81,11 @@ public class ThreadSocket extends Thread{
 		Server.LOGGER.log(Level.INFO, "Archivos recibidos de " + name);
 		try {
 			server.sendUser();
+			try {
+				server.sendArchivesToUser();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} catch (ParserConfigurationException | TransformerFactoryConfigurationError | TransformerException e) {
 			e.printStackTrace();
 		}
@@ -81,9 +95,23 @@ public class ThreadSocket extends Thread{
 		this.name = request;
 		Server.LOGGER.log(Level.INFO, "Conexion con  -> " + request + " con la direccion ip -> " + connection.getInetAddress().getHostAddress());
 	}
-	
+
 	public void sendArchives() throws IOException {
 		output.writeUTF(Request.SEND_CLIENTS.toString());
+		if (input.readUTF().equals(Request.PETITION_ACCEPT.toString())) {
+			waitForNewConnectionArchive();
+		}
+	}
+
+	private void waitForNewConnectionArchive() throws IOException {
+		File file = FileManager.NEW_FILE;
+		output.writeUTF(String.valueOf(file.length()));
+		FileInputStream fis = new FileInputStream(file);
+		byte[] buffer = new byte[4096];
+		while (fis.read(buffer) > 0) {
+			output.write(buffer);
+		}
+		fis.close();
 	}
 
 	@Override

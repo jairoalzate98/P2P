@@ -2,5 +2,5 @@ package comunication;
 
 public enum Request {
 
-	SEND_CLIENTS
+	SEND_CLIENTS, PETITION_ACCEPT
 }
