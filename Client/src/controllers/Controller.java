@@ -31,7 +31,7 @@ public class Controller implements ActionListener{
 		String path;
 		try {
 			path = mainWindow.setVisibleFileChooser();
-			client = new Client(ip, port, name, path, this);
+			client = new Client(ip, port, name, path);
 			sendArchives();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -66,7 +66,33 @@ public class Controller implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		switch (Events.valueOf(e.getActionCommand())) {
-			
+		case SEARCH:
+			search();
+			break;
+		case DOWNLOAD:
+			download();
+			break;
+		}
+	}
+
+	private void download() {
+		String archive = mainWindow.getArchiveToDownload();
+		User u = mainWindow.getUserSelected();
+		try {
+			client.sendArchiveToDownload(archive, u.getName());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void search() {
+		ArrayList<String> archives = new ArrayList<>();
+		ArrayList<String> files = mainWindow.getUserSelected().getArchives();
+		for (String string : files) {
+			int lastIndex = string.lastIndexOf("\\");
+			String name = string.substring(lastIndex + 1, string.length());
+			archives.add(name);
+			mainWindow.setModel(archives);
 		}
 	}
 }

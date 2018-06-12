@@ -31,7 +31,7 @@ public class FileManager {
 			String name = user.getElementsByTagName(NAME).item(0).getTextContent();
 			NodeList a = user.getElementsByTagName(ARCHIVE);
 			for (int j = 0; j < a.getLength(); j++) {
-				archives.add(a.item(i).getTextContent());
+				archives.add(a.item(j).getTextContent());
 			}
 			userList.add(new User(name, archives));
 		}

@@ -3,14 +3,13 @@ package comunication;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import controllers.Controller;
 
 public class Client extends Thread {
 
@@ -22,11 +21,9 @@ public class Client extends Thread {
 	private String name;
 	private ArrayList<String> archives;
 	private String path;
-	private Controller controller;
 
-	public Client(String ip, int port, String name, String path, Controller controller) throws IOException {
+	public Client(String ip, int port, String name, String path) throws IOException {
 		this.path = path;
-		this.controller = controller;
 		archives = new ArrayList<>();
 		this.name = name;
 		this.connection = new Socket(ip, port);
@@ -57,8 +54,27 @@ public class Client extends Thread {
 		if (response.equals(Request.SEND_CLIENTS.toString())) {
 			int size = Integer.parseInt(input.readUTF());
 			readArchive(size);
-//			controller.readUsers();
+		}else if(response.equals(Request.SEND_ARCHIVE_TO_USER.toString())) {
+			System.out.println("Hola");
+			String archive = input.readUTF();
+			System.out.println(archive);
+			for (String string : archives) {
+				if (string.substring(string.lastIndexOf("\\"), string.length()).equals(archive)) {
+					File file = new File(string);
+					sendArchive(file);
+				}
+			}
 		}
+	}
+
+	private void sendArchive(File file) throws IOException {
+		output.writeUTF(String.valueOf(file.length()));
+		FileInputStream fis = new FileInputStream(file);
+		byte[] buffer = new byte[4096];
+		while (fis.read(buffer) > 0) {
+			output.write(buffer);
+		}
+		fis.close();
 	}
 
 	private void readArchive(double size) throws IOException {
@@ -103,5 +119,10 @@ public class Client extends Thread {
 			send += string + ",";
 		}
 		output.writeUTF(send);
+	}
+	
+	public void sendArchiveToDownload(String archive, String name) throws IOException {
+		output.writeUTF(Request.DOWNLOAD.toString());
+		output.writeUTF(name + "," + archive);
 	}
 }

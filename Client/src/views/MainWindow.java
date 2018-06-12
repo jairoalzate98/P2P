@@ -2,14 +2,17 @@ package views;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.JComboBox;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JList;
 
+import controllers.Controller;
+import controllers.Events;
 import models.User;
 
 public class MainWindow extends JFrame{
@@ -19,22 +22,39 @@ public class MainWindow extends JFrame{
 	private static final long serialVersionUID = 1L;
 	public static final int HEIGHT_FRAME = 500;
 	public static final int WIDTH_FRAME = 400;
-	private JComboBox<User> jcbUsers; 
+	private JPanelNorth jPanelNorth;
+	private JList<String> archiveList;
+	private DefaultListModel<String> archiveModel;
 
-	public MainWindow(ActionListener actionListener) {
+	public MainWindow(Controller actionListener) {
 		setTitle(TITLE_TEXT);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(new Dimension(WIDTH_FRAME, HEIGHT_FRAME));
 		setLocationRelativeTo(null);
-		jcbUsers = new JComboBox<>();
-		add(jcbUsers, BorderLayout.NORTH);
+		jPanelNorth = new JPanelNorth(actionListener);
+		add(jPanelNorth, BorderLayout.NORTH);
+		archiveModel = new DefaultListModel<>();
+		archiveList = new JList<>(archiveModel);
+		add(archiveList, BorderLayout.CENTER);
+		JButton jbtnAccept = new JButton("Download");
+		jbtnAccept.setActionCommand(Events.DOWNLOAD.toString());
+		jbtnAccept.addActionListener(actionListener);
+		add(jbtnAccept, BorderLayout.SOUTH);
 	}
 	
 	public void setUsers(ArrayList<User> users) {
-		jcbUsers.removeAllItems();
-		for (User user : users) {
-			jcbUsers.addItem(user);
+		jPanelNorth.setUsers(users);
+	}
+	
+	public void setModel(ArrayList<String> archives) {
+		archiveModel.clear();
+		for (String string : archives) {
+			archiveModel.addElement(string);
 		}
+	}
+	
+	public String getArchiveToDownload() {
+		return archiveList.getSelectedValue();
 	}
 	
 	public String setVisibleFileChooser() throws Exception{
@@ -49,5 +69,9 @@ public class MainWindow extends JFrame{
 			new Exception(EXCEPTION_FILE_CHOOSER_TEXT);
 		}
 		return path;
+	}
+	
+	public User getUserSelected() {
+		return jPanelNorth.getUserSelected();
 	}
 }
