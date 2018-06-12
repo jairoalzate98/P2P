@@ -1,11 +1,16 @@
 package views;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+
+import models.User;
 
 public class MainWindow extends JFrame{
 
@@ -14,12 +19,22 @@ public class MainWindow extends JFrame{
 	private static final long serialVersionUID = 1L;
 	public static final int HEIGHT_FRAME = 500;
 	public static final int WIDTH_FRAME = 400;
+	private JComboBox<User> jcbUsers; 
 
 	public MainWindow(ActionListener actionListener) {
 		setTitle(TITLE_TEXT);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
 		setSize(new Dimension(WIDTH_FRAME, HEIGHT_FRAME));
+		setLocationRelativeTo(null);
+		jcbUsers = new JComboBox<>();
+		add(jcbUsers, BorderLayout.NORTH);
+	}
+	
+	public void setUsers(ArrayList<User> users) {
+		jcbUsers.removeAllItems();
+		for (User user : users) {
+			jcbUsers.addItem(user);
+		}
 	}
 	
 	public String setVisibleFileChooser() throws Exception{

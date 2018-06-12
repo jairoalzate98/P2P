@@ -40,7 +40,7 @@ public class Client extends Thread {
 	@Override
 	public void run() {
 		while (!stop) {
-			String response;
+			String response = null;
 			try {
 				response = input.readUTF();
 				if (response != null) {
@@ -55,22 +55,19 @@ public class Client extends Thread {
 
 	private void manageResponse(String response) throws IOException {
 		if (response.equals(Request.SEND_CLIENTS.toString())) {
-			output.writeUTF(Request.PETITION_ACCEPT.toString());
 			int size = Integer.parseInt(input.readUTF());
-			readArchive(size, input);
-			controller.readUsers();
+			readArchive(size);
+//			controller.readUsers();
 		}
 	}
 
-	private void readArchive(double size, DataInputStream input) throws IOException {
+	private void readArchive(double size) throws IOException {
 		FileOutputStream fos = new FileOutputStream("users.xml");
 		byte[] buffer = new byte[4096];
 		int filesize = (int)size;
 		int read = 0;
-		int totalRead = 0;
 		int remaining = filesize;
 		while((read = input.read(buffer, 0, Math.min(buffer.length, remaining))) > 0) {
-			totalRead += read;
 			remaining -= read;
 			fos.write(buffer, 0, read);
 		}

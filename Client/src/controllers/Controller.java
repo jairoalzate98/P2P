@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 
 import comunication.Client;
 import models.User;
@@ -19,6 +20,7 @@ public class Controller implements ActionListener{
 	private Client client;
 	private MainWindow mainWindow;
 	private FileManager fileManager;
+	private Timer timer;
 	
 	public Controller() {
 		fileManager = new FileManager();
@@ -35,6 +37,13 @@ public class Controller implements ActionListener{
 			e.printStackTrace();
 		}
 		mainWindow.setVisible(true);
+		timer = new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				readUsers();
+			}
+		});
+		timer.start();
 	}
 
 	private void sendArchives() {
@@ -48,9 +57,7 @@ public class Controller implements ActionListener{
 	public void readUsers() {
 		try {
 			ArrayList<User> users = fileManager.read();
-			for (User user : users) {
-				System.out.println(user);
-			}
+			mainWindow.setUsers(users);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

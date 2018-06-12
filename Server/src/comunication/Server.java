@@ -36,7 +36,7 @@ public class Server extends Thread{
 	}
 	
 	@Override
-	public void run() {
+	public void run() {	
 		while (!stop) {
 			Socket connection;
 			try {
@@ -55,11 +55,5 @@ public class Server extends Thread{
 	
 	public void sendUser() throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
 		fileManager.writeReport(connections);
-	}
-	
-	public void sendArchivesToUser() throws IOException {
-		for (ThreadSocket threadSocket : connections) {
-			threadSocket.sendArchives();
-		}
 	}
 }

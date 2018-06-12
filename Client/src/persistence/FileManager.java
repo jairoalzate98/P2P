@@ -19,11 +19,10 @@ public class FileManager {
 	private static final String ARCHIVE = "Archive";
 	public static final String NAME = "Name";
 	public static final String ENTITY_NAME = "User";
-	public static final File NEW_FILE = new File("users.xml");
 
 	public ArrayList<User> read() throws IOException, SAXException, ParserConfigurationException{
 		ArrayList<User> userList = new ArrayList<>();
-		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(NEW_FILE);
+		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File("users.xml"));
 		Element root = document.getDocumentElement();;
 		NodeList list = root.getElementsByTagName(ENTITY_NAME);
 		ArrayList<String> archives = new ArrayList<>();

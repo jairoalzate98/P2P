@@ -51,23 +51,16 @@ public class ThreadSocket extends Thread{
 					if (name.equals("")) {
 						manageRequest(request);
 					}else{
-						saveArchives(request);
+						try {
+							saveArchives(request);
+						} catch (ParserConfigurationException | TransformerFactoryConfigurationError | TransformerException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			} catch (IOException e) {
 				Server.LOGGER.log(Level.INFO, "Usuario " + name + " con direccion ip = " + connection.getInetAddress().getHostAddress() + " desconectado");
 				stop = true;
-				try {
-					server.sendUser();
-					try {
-						server.sendArchivesToUser();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				} catch (ParserConfigurationException | TransformerFactoryConfigurationError
-						| TransformerException e1) {
-					e1.printStackTrace();
-				}
 			}
 		}
 	}
@@ -76,19 +69,11 @@ public class ThreadSocket extends Thread{
 		return archives;
 	}
 
-	private void saveArchives(String request)  {
+	private void saveArchives(String request) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException  {
 		archives = request.split(",");
 		Server.LOGGER.log(Level.INFO, "Archivos recibidos de " + name);
-		try {
-			server.sendUser();
-			try {
-				server.sendArchivesToUser();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (ParserConfigurationException | TransformerFactoryConfigurationError | TransformerException e) {
-			e.printStackTrace();
-		}
+		server.sendUser();
+		waitForNewConnectionArchive();
 	}
 
 	private void manageRequest(String request)throws IOException {
@@ -96,15 +81,9 @@ public class ThreadSocket extends Thread{
 		Server.LOGGER.log(Level.INFO, "Conexion con  -> " + request + " con la direccion ip -> " + connection.getInetAddress().getHostAddress());
 	}
 
-	public void sendArchives() throws IOException {
-		output.writeUTF(Request.SEND_CLIENTS.toString());
-		if (input.readUTF().equals(Request.PETITION_ACCEPT.toString())) {
-			waitForNewConnectionArchive();
-		}
-	}
-
 	private void waitForNewConnectionArchive() throws IOException {
 		File file = FileManager.NEW_FILE;
+		output.writeUTF(Request.SEND_CLIENTS.toString());
 		output.writeUTF(String.valueOf(file.length()));
 		FileInputStream fis = new FileInputStream(file);
 		byte[] buffer = new byte[4096];
@@ -116,6 +95,10 @@ public class ThreadSocket extends Thread{
 
 	@Override
 	public String toString() {
-		return "Conectado con " + name + " con direccion ip " + connection.getInetAddress().getHostAddress();
+		if (stop) {
+			return name + " con direccion ip " + connection.getInetAddress().getHostAddress() + " desconectado";
+		}else {
+			return "Conectado con " + name + " con direccion ip " + connection.getInetAddress().getHostAddress();
+		}
 	}
 }
